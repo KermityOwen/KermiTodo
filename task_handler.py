@@ -1,69 +1,72 @@
 import json
 import requests
+import sqlite3
+from datetime import datetime
+
+class Task:
+    def __init__(self, name: str, description: str, date_created: datetime, date_deadline: datetime):
+        if(self.validate(name, description, date_created, date_deadline)):
+            pass 
+        else:
+            raise Exception("Invalid Task")
+        
+        self.name = name
+        self.description = description
+        self.date_created = date_created
+        self.date_deadline = date_deadline
+        self.complete = False
+        
+        print("Task Created")
+        
+        
+    def validate(self, name: str, description: str, date_created: datetime, date_deadline: datetime):
+        validity = True
+        validity = (len(name) <= 32) and (len(name) > 0) and validity 
+        validity = (len(description) <= 512) and validity
+        validity = (date_created < date_deadline) and validity
+        return validity
+    
+    
+    def toggle_complete(self):
+        self.complete = not self.complete
+        
+    def __str__(self):
+        return (f"Name: {self.name}\n"
+                f"Description: {self.description}\n"
+                f"Date-Created: {self.date_created.strftime('%d/%m/%Y')}\n"
+                f"Deadline: {self.date_deadline.strftime('%d/%m/%Y')}\n"
+                f"Completed: {self.complete}")
+    
+    
+class Tasks_handler:
+    def __init__(self):
+        self.id_counter = 0
+        self.tasks: dict[int, Task] = {} # Index : Task Object
+    
+    def add_task(self, task:Task):
+        self.tasks[self.id_counter] = task
+        # TODO: Write to DB
+        
+    def complete_task(self, task_id: int):
+        self.tasks[task_id].toggle_complete()
+        # TODO: Update to DB
+
+    def remove_task(self, task_id: int):
+        self.tasks.pop(task_id)
+        # TODO: Remove from DB
+        
+    def get_task(self, task_id: int):
+        return self.tasks[task_id]
+    
+    def get_tasks_ids(self):
+        return list(self.tasks.keys())
 
 
-class Task_handler:
-    def __init__(self, cloud_db_url: str, local_db_path: str):
-        self.tasks = {} # <Name> : <Task>
-        self.cloud_db_url = cloud_db_url # Firebase URL
-        self.local_db_path = local_db_path # Local JSON File Path
+if __name__ == "__main__":
+    task_handler = Tasks_handler()
+    task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
+    task_handler.add_task(task1)
+    
+    print(task_handler.get_task(0))
     
     
-    def create_task(self, name: str, task: str):
-        try:
-            self.tasks[name] = task
-            return 1
-        except:
-            return 0
-        
-        
-    def delete_task(self, name: str):
-        try:
-            self.tasks.pop(name)
-            return 1
-        except:
-            return 0
-        
-        
-    def get_tasks(self):
-        return self.tasks
-    
-    
-    def load_file(self):
-        with open(self.local_db_path) as json_file:
-            json_data = json.load(json_file)
-            tasks_data = json_data["Tasks"]
-            for task in tasks_data:
-                name = task["Name"]
-                description = task["Description"]
-                self.tasks[name] = description
-    
-    
-    def save_file(self):
-        with open(self.local_db_path, "w+") as json_file:
-            json_data = {}
-            tasks_data = []
-            for name, desc in self.tasks.items():
-                task = {}
-                task["Name"] = name
-                task["Description"] = desc
-                tasks_data.append(task)
-            json_data["Tasks"] = tasks_data
-            
-            print(json_data)
-            json_file.write(json.dumps(json_data, indent=4))
-        
-        
-    def upload_to_cloud(self):
-        with open(self.local_db_path) as json_file:
-            json_data = json.load(json_file)
-            payload = json.dumps(json_data, indent=4)
-            r = requests.put(self.cloud_db_url+".json", data=payload)
-            print(r.content)
-        
-        
-    def download_from_cloud(self):
-        content = requests.get(self.cloud_db_url+".json")
-        print(content.json())
-        with open(self.local_db_path, "w+") as json_file:
-            json_file.write(json.dumps(content.json(), indent=4))
