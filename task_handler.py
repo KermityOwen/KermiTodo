@@ -1,7 +1,6 @@
-import json
-import requests
 import sqlite3
 from datetime import datetime
+from db_handler import *
 
 class Task:
     def __init__(self, name: str, description: str, date_created: datetime, date_deadline: datetime):
@@ -39,34 +38,53 @@ class Task:
     
     
 class Tasks_handler:
-    def __init__(self):
+    def __init__(self, db_path: str):
         self.id_counter = 0
         self.tasks: dict[int, Task] = {} # Index : Task Object
+
+        self.conn = sqlite3.connect(db_path)
+    
+    
+    def load_local_db(self):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM tasks")
+        db_tasks = cursor.fetchall()
+        for row in db_tasks:
+            start_time = datetime.strptime(row[3], "%d/%m/%Y")
+            end_time = datetime.strptime(row[4], "%d/%m/%Y")
+            curr_task = Task(row[1], row[2], start_time, end_time)
+            self.tasks[row[0]] = curr_task
+            
     
     def add_task(self, task:Task):
         self.tasks[self.id_counter] = task
-        # TODO: Write to DB
+        add_task_local(self.conn, self.id_counter, task.name, task.description, task.date_created, task.date_deadline)
+        
         
     def complete_task(self, task_id: int):
         self.tasks[task_id].toggle_complete()
-        # TODO: Update to DB
+
 
     def remove_task(self, task_id: int):
         self.tasks.pop(task_id)
-        # TODO: Remove from DB
+        remove_task_local(self.conn, task_id)
+        
         
     def get_task(self, task_id: int):
         return self.tasks[task_id]
+    
     
     def get_tasks_ids(self):
         return list(self.tasks.keys())
 
 
 if __name__ == "__main__":
-    task_handler = Tasks_handler()
-    task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
-    task_handler.add_task(task1)
+    task_handler = Tasks_handler("tasks_db.sqlite")
+    # task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
+    # task_handler.add_task(task1)
     
-    print(task_handler.get_task(0))
+    task_handler.load_local_db()
+    print(task_handler.get_tasks_ids())
+    # print(task_handler.get_task())
     
     
