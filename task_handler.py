@@ -81,10 +81,13 @@ class Tasks_handler:
 
 if __name__ == "__main__":
     task_handler = Tasks_handler("tasks_db.sqlite")
+    
     task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
     task2 = Task("name2", "ipsum loren yadda yadda yoo2", datetime.now(), datetime(2024,6,1))
+    task3 = Task("name3", "ipsum loren yadda yadda yoo3", datetime.now(), datetime(2024,6,10))
     task_handler.add_task(task1)
     task_handler.add_task(task2)
+    task_handler.add_task(task3)
     
     task_handler.load_local_db()
     print(task_handler.get_tasks_ids())
