@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-SQL_CREATE_TABLE = f"CREATE TABLE tasks (id INTERGER NOT NULL PRIMARY KEY, name TEXT, description TEXT, startDate TEXT, endDate TEXT)"
+SQL_CREATE_TABLE = f"CREATE TABLE tasks (id INTERGER NOT NULL PRIMARY KEY, name TEXT, description TEXT, startDate TEXT, endDate TEXT, complete INTEGER NOT NULL)"
 
 SQL_DELETE_TABLE = f"DROP TABLE tasks"
 
@@ -27,7 +27,7 @@ def add_task_local(conn: sqlite3.Connection, id: int, name: str, desc: str, star
     
     # TODO Check for ID clashes
     
-    cursor.execute(f"INSERT INTO tasks VALUES('{id}', '{name}', '{desc}', '{startstr}', '{endstr}')")
+    cursor.execute(f"INSERT INTO tasks VALUES('{id}', '{name}', '{desc}', '{startstr}', '{endstr}', '0')") # 0 as boolean for False
     conn.commit()
 
 
@@ -38,6 +38,6 @@ def remove_task_local(conn: sqlite3.Connection, id):
 
 if __name__ == "__main__":
     conn = sqlite3.connect("tasks_db.sqlite")
-    # reset_local_db(conn)
+    reset_local_db(conn)
     # add_task_local(conn, 1, "test", "desc", datetime.now(), datetime(2024,6,5))
     

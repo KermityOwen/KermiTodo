@@ -22,7 +22,7 @@ class Task:
         validity = True
         validity = (len(name) <= 32) and (len(name) > 0) and validity 
         validity = (len(description) <= 512) and validity
-        validity = (date_created < date_deadline) and validity
+        # validity = (date_created < date_deadline) and validity
         return validity
     
     
@@ -59,6 +59,7 @@ class Tasks_handler:
     def add_task(self, task:Task):
         self.tasks[self.id_counter] = task
         add_task_local(self.conn, self.id_counter, task.name, task.description, task.date_created, task.date_deadline)
+        self.id_counter += 1
         
         
     def complete_task(self, task_id: int):
@@ -80,11 +81,13 @@ class Tasks_handler:
 
 if __name__ == "__main__":
     task_handler = Tasks_handler("tasks_db.sqlite")
-    # task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
-    # task_handler.add_task(task1)
+    task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
+    task2 = Task("name2", "ipsum loren yadda yadda yoo2", datetime.now(), datetime(2024,6,1))
+    task_handler.add_task(task1)
+    task_handler.add_task(task2)
     
     task_handler.load_local_db()
     print(task_handler.get_tasks_ids())
-    # print(task_handler.get_task())
+    print(task_handler.get_task(0))
     
     

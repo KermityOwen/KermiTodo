@@ -2,38 +2,88 @@ from rich.console import Console
 from rich.table import Table
 from rich.layout import Layout
 from rich.panel import Panel
+import os
+
+from typing import Dict
+from datetime import datetime
+
+from task_handler import Task, Tasks_handler
 
 
-def generate_table(tasks: dict):
-    table = Table(expand=True)
+def generate_header() -> Panel:
+    grid = Table.grid(expand=True)
+    grid.add_column(justify="center", ratio=1)
+    grid.add_column(justify="right")
+    grid.add_row(
+        "[rgb(230,255,250)]Kermit's [b]TO-DO[/b] App",
+        "[rgb(230,255,250)]"+datetime.now().ctime(),
+    )
+    return Panel(grid, border_style="rgb(230,255,250)", style="white on rgb(80,200,70)")
+
+
+def generate_table(tasks: Dict[int, Task]):
+    table = Table(expand=True, style="rgb(50,125,100)")
     
-    table.add_column("ID")
-    table.add_column("Name")
-    table.add_column("Description")
+    table.add_column("[rgb(122,255,235)]ID", ratio=2, justify="center")
+    table.add_column("[rgb(122,255,235)]Name", ratio=5, justify="center")
+    table.add_column("[rgb(122,255,235)]Description", ratio=25, justify="center")
+    table.add_column("[rgb(122,255,235)]Deadline", ratio=9, justify="center")
+    table.add_column("[rgb(122,255,235)]Days Left", ratio=4, justify="center")
+    table.add_column("[rgb(122,255,235)]Done", ratio=2, justify="center")
     
-    i = 0
-    for x, y in tasks.items():
-        table.add_row(str(i), str(x), str(y))
-        i = i+1
-    
+    for id, task in tasks.items():
+        deadline = task.date_deadline
+        time_left = (deadline - datetime.now()).days
+        deadline_str = deadline.strftime("%d/%m/%Y")
+        time_left_str = str(time_left)
+        
+        if (time_left <= 0):
+            time_left_str = "[red]" + time_left_str
+            deadline_str = "[red]" + deadline_str
+        else:
+            time_left_str = "[green]" + time_left_str
+            deadline_str = "[green]" + deadline_str
+        
+        task_doneness = "[b][white]\[ ][/b]"
+        if (task.complete == True):
+            task_doneness = "[b][green]\[x][/b]"
+        
+        table.add_row(str(id), task.name, task.description, deadline_str, time_left_str, task_doneness)
     return table
 
 
 def render_UI(tasks: dict, console: Console):
-    panel_table = Panel.fit(generate_table(tasks))
-    panel_table.expand = True
+    os.system('cls||clear')
+    table_panel = Panel.fit(generate_table(tasks), border_style="green", title="[rgb(80,200,70)]Tasks")
+    table_panel.expand = True
     
     layout = Layout()
     layout.split_column(
-        Layout(name="upper"),
-        Layout(name="lower")
+        Layout(name="header", minimum_size=3),
+        Layout(name="table"),
+        Layout(name="prompt", minimum_size=3)
     )
     
-    layout["upper"].ratio = 7
-    layout["upper"].update(
-        panel_table
+    layout["header"].ratio = 1
+    layout["header"].update(
+        generate_header(),
     )
     
-    layout["lower"].ratio = 1
+    layout["table"].ratio = 15
+    layout["table"].update(
+        table_panel,
+    )
+    
+    layout["prompt"].ratio = 1
 
     console.print(layout)
+    
+if __name__ == "__main__":
+    console = Console()
+    
+    task_handler = Tasks_handler("tasks_db.sqlite")
+    
+    task_handler.load_local_db()
+    task_handler.complete_task(0)
+    
+    render_UI(task_handler.tasks, console)
