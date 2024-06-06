@@ -8,7 +8,6 @@ from typing import Dict
 from datetime import datetime
 
 from task_handler import Task, Tasks_handler
-from time import sleep
 
 # TODO color config
 
@@ -72,7 +71,7 @@ def generate_table(tasks: Dict[int, Task]):
 
 
 def render_UI(tasks: dict, console: Console, command_stream: str = ""):
-    os.system('cls||clear')
+    # os.system('cls||clear')
     table_panel = Panel.fit(generate_table(tasks), border_style="green", title="[rgb(80,200,70)]Tasks")
     table_panel.expand = True
     
@@ -99,23 +98,4 @@ def render_UI(tasks: dict, console: Console, command_stream: str = ""):
     )
 
     console.print(layout)
-    
-if __name__ == "__main__":
-    console = Console()
-    console.height = console.height - 1
-    
-    console_prompt = Console()
-    console_prompt.height = 1
-    
-    task_handler = Tasks_handler("tasks_db.sqlite")
-    
-    task_handler.load_local_db()
-    task_handler.complete_task(0)
-    
-    render_UI(task_handler.tasks, console)
-    
-    while True:
-        input = console_prompt.input("[green] >: ")
-        # TODO handle input
-        render_UI(task_handler.tasks, console)
     

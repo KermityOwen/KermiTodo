@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-from db_handler import *
+from db_handler import add_task_local, remove_task_local
 
 class Task:
     def __init__(self, name: str, description: str, date_created: datetime, date_deadline: datetime):
@@ -22,7 +22,6 @@ class Task:
         validity = True
         validity = (len(name) <= 32) and (len(name) > 0) and validity 
         validity = (len(description) <= 512) and validity
-        # validity = (date_created < date_deadline) and validity
         return validity
     
     
@@ -49,11 +48,16 @@ class Tasks_handler:
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM tasks")
         db_tasks = cursor.fetchall()
+        highest_id = 0
         for row in db_tasks:
             start_time = datetime.strptime(row[3], "%d/%m/%Y")
             end_time = datetime.strptime(row[4], "%d/%m/%Y")
             curr_task = Task(row[1], row[2], start_time, end_time)
             self.tasks[row[0]] = curr_task
+            if row[0] > highest_id:
+                highest_id = row[0]
+        self.id_counter = highest_id+1
+        
             
     
     def add_task(self, task:Task):
@@ -82,12 +86,12 @@ class Tasks_handler:
 if __name__ == "__main__":
     task_handler = Tasks_handler("tasks_db.sqlite")
     
-    task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
-    task2 = Task("name2", "ipsum loren yadda yadda yoo2", datetime.now(), datetime(2024,6,1))
-    task3 = Task("name3", "ipsum loren yadda yadda yoo3", datetime.now(), datetime(2024,6,10))
-    task_handler.add_task(task1)
-    task_handler.add_task(task2)
-    task_handler.add_task(task3)
+    # task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
+    # task2 = Task("name2", "ipsum loren yadda yadda yoo2", datetime.now(), datetime(2024,6,1))
+    # task3 = Task("name3", "ipsum loren yadda yadda yoo3", datetime.now(), datetime(2024,6,10))
+    # task_handler.add_task(task1)
+    # task_handler.add_task(task2)
+    # task_handler.add_task(task3)
     
     task_handler.load_local_db()
     print(task_handler.get_tasks_ids())
