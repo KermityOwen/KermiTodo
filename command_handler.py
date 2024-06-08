@@ -2,12 +2,14 @@ from task_handler import Task, Tasks_handler
 from datetime import datetime
 import os
 
-HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>."""
+
+HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>. Default seperator is ' '"""
 HELP_ADD = """Syntax: add <task_name> <task_description> <task_deadline>. To add a task to the to-do list, date is in the format of dd/mm/YYYY"""
 HELP_REMOVE = """Syntax: remove <task_id>. Removes task from to-do list."""
 HELP_EXIT = """Syntax: exit. Exits the program"""
 HELP_COMPLETE = """Syntax: complete <task_id>. Toggles task's completeness"""
 HELP_UPDATE = """Syntax: update <task_id> <task_name> <task_description> <task_deadline>. Updates task's details. Enter '-' to skip updating that element."""
+
 
 class Command_handler:
     def __init__(self, task_handler: Tasks_handler):
@@ -16,7 +18,7 @@ class Command_handler:
                              "complete": self.complete_task_command,
                              "update": self.update_task_command,
                              "exit": self.exit_command,
-                             "help": self.help_command}
+                             "help": self.help_command,}
         
         self.task_handler = task_handler
     
@@ -102,4 +104,4 @@ class Command_handler:
             cmd_out = self.COMMANDS_MAP.get(func)(parsed_args)
             return cmd_out
         except Exception as e:
-            return e
+            return f"Invalid Command: {func}. Use 'help' to get a full list of commands."

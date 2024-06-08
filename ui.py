@@ -22,6 +22,7 @@ def generate_header() -> Panel:
     )
     return Panel(grid, border_style="rgb(230,255,250)", style="white on rgb(80,200,70)")
 
+
 def generate_prompt(cmd_output: str) -> Panel:
     grid = Table.grid(expand=True)
     grid.add_column(justify="center", ratio=1)
@@ -30,6 +31,7 @@ def generate_prompt(cmd_output: str) -> Panel:
         f"[green]{cmd_output}[/green]"
     )
     return Panel(grid, border_style="rgb(50,125,100)", style="default")
+
 
 def generate_table(tasks: Dict[int, Task]):
     table = Table(expand=True, style="rgb(50,125,100)")
@@ -54,7 +56,7 @@ def generate_table(tasks: Dict[int, Task]):
         task_doneness = "[b][white]\[ ][/b]"
         if (task.complete == True):
             task_doneness = "[b][green]\[x][/b]"
-            time_left_str = "[green]" + time_left_str
+            time_left_str = "[green]" + "Complete"
             deadline_str = "[green]" + deadline_str
             id_str = "[green]" + id_str
             name_str = "[green]" + name_str
