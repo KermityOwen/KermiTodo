@@ -1,10 +1,10 @@
 import sqlite3
 from datetime import datetime
-from db_handler import add_task_local, remove_task_local
+from db_handler import *
 
 class Task:
-    def __init__(self, name: str, description: str, date_created: datetime, date_deadline: datetime):
-        if(self.validate(name, description, date_created, date_deadline)):
+    def __init__(self, name: str, description: str, date_created: datetime, date_deadline= datetime.now(), complete=False):
+        if(self.validate(name, description)):
             pass 
         else:
             raise Exception("Invalid Task")
@@ -13,12 +13,12 @@ class Task:
         self.description = description
         self.date_created = date_created
         self.date_deadline = date_deadline
-        self.complete = False
+        self.complete = complete
         
         print("Task Created")
         
         
-    def validate(self, name: str, description: str, date_created: datetime, date_deadline: datetime):
+    def validate(self, name: str, description: str):
         validity = True
         validity = (len(name) <= 32) and (len(name) > 0) and validity 
         validity = (len(description) <= 512) and validity
@@ -52,7 +52,7 @@ class Tasks_handler:
         for row in db_tasks:
             start_time = datetime.strptime(row[3], "%d/%m/%Y")
             end_time = datetime.strptime(row[4], "%d/%m/%Y")
-            curr_task = Task(row[1], row[2], start_time, end_time)
+            curr_task = Task(row[1], row[2], start_time, end_time, row[5])
             self.tasks[row[0]] = curr_task
             if row[0] > highest_id:
                 highest_id = row[0]
@@ -60,7 +60,7 @@ class Tasks_handler:
         
             
     
-    def add_task(self, task:Task):
+    def add_task(self, task: Task):
         self.tasks[self.id_counter] = task
         add_task_local(self.conn, self.id_counter, task.name, task.description, task.date_created, task.date_deadline)
         self.id_counter += 1
@@ -68,6 +68,7 @@ class Tasks_handler:
         
     def complete_task(self, task_id: int):
         self.tasks[task_id].toggle_complete()
+        toggle_complete_local(self.conn, task_id)
 
 
     def remove_task(self, task_id: int):
@@ -75,26 +76,25 @@ class Tasks_handler:
         remove_task_local(self.conn, task_id)
         
         
-    def get_task(self, task_id: int):
+    def update_task(self, task_id: int, new_name: str, new_desc: str, new_deadline_str: str):
+        # NOT THE BEST (or even a good) WAY TO DO IT BUT IT WORKS FOR NOW
+        # Easiest way to handle skip cases
+        if new_name != "-":  
+            self.tasks[task_id].name = new_name
+            update_task_name_local(self.conn, task_id, new_name)
+        if new_desc != "-":  
+            self.tasks[task_id].description = new_desc
+            update_task_desc_local(self.conn, task_id, new_desc)
+        if new_deadline_str != "-":
+            new_deadline = datetime.strptime(new_deadline_str, "%d/%m/%Y")
+            self.tasks[task_id].date_deadline = new_deadline
+            update_task_deadline_local(self.conn, task_id, new_deadline_str)
+
+    
+    def get_task(self, task_id: int) -> Task:
         return self.tasks[task_id]
     
     
     def get_tasks_ids(self):
         return list(self.tasks.keys())
-
-
-if __name__ == "__main__":
-    task_handler = Tasks_handler("tasks_db.sqlite")
-    
-    # task1 = Task("name1", "ipsum loren yadda yadda yoo", datetime.now(), datetime(2024,6,10))
-    # task2 = Task("name2", "ipsum loren yadda yadda yoo2", datetime.now(), datetime(2024,6,1))
-    # task3 = Task("name3", "ipsum loren yadda yadda yoo3", datetime.now(), datetime(2024,6,10))
-    # task_handler.add_task(task1)
-    # task_handler.add_task(task2)
-    # task_handler.add_task(task3)
-    
-    task_handler.load_local_db()
-    print(task_handler.get_tasks_ids())
-    print(task_handler.get_task(0))
-    
     

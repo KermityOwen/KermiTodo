@@ -16,7 +16,6 @@ if __name__ == "__main__":
     cmd_handler = Command_handler(task_handler)
     
     task_handler.load_local_db()
-    task_handler.complete_task(0)
     
     render_UI(task_handler.tasks, console)
     

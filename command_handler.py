@@ -6,6 +6,7 @@ class Command_handler:
     def __init__(self, task_handler: Tasks_handler):
         self.COMMANDS_MAP = {"add": self.add_task_command,
                              "remove": self.remove_task_command,
+                             "complete": self.complete_task_command,
                              "update": self.update_task_command,
                              "exit": self.exit_command}
         
@@ -18,10 +19,13 @@ class Command_handler:
     def remove_task_command(self, args_arr):
         self.task_handler.remove_task(int(args_arr[0]))
         
+    def complete_task_command(self, args_arr):
+        self.task_handler.complete_task(int(args_arr[0]))
+    
     def update_task_command(self, args_arr):
-        print("update")
+        self.task_handler.update_task(int(args_arr[0]), args_arr[1], args_arr[2], args_arr[3])
 
-    def exit_command(self, args_arr):
+    def exit_command(self, args_arr): # Need to pass in args but doesn't need to use them
         os.system("cls||clear")
         exit()
 

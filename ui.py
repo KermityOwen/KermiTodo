@@ -70,8 +70,9 @@ def generate_table(tasks: Dict[int, Task]):
     return table
 
 
-def render_UI(tasks: dict, console: Console, command_stream: str = ""):
-    # os.system('cls||clear')
+def render_UI(tasks: dict, console: Console, debug=False):
+    if (debug):    
+        os.system('cls||clear')
     table_panel = Panel.fit(generate_table(tasks), border_style="green", title="[rgb(80,200,70)]Tasks")
     table_panel.expand = True
     

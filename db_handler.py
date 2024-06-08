@@ -19,14 +19,17 @@ def reset_local_db(conn: sqlite3.Connection):
         pass
     cursor.execute(SQL_CREATE_TABLE)
 
+def toggle_complete_local(conn: sqlite3.Connection, id: int):
+    cursor = conn.cursor()
+    cursor.execute(f"UPDATE tasks SET complete = ((complete | 1) - (complete & 1)) WHERE id = {id}")
+    conn.commit()
+
 
 def add_task_local(conn: sqlite3.Connection, id: int, name: str, desc: str, startdate: datetime, enddate:datetime):
     cursor = conn.cursor()
     startstr = startdate.strftime("%d/%m/%Y")
     endstr = enddate.strftime("%d/%m/%Y")
-    
     # TODO Check for ID clashes
-    
     cursor.execute(f"INSERT INTO tasks VALUES('{id}', '{name}', '{desc}', '{startstr}', '{endstr}', '0')") # 0 as boolean for False
     conn.commit()
 
@@ -34,6 +37,24 @@ def add_task_local(conn: sqlite3.Connection, id: int, name: str, desc: str, star
 def remove_task_local(conn: sqlite3.Connection, id):
     cursor = conn.cursor()
     cursor.execute(f"DELETE FROM tasks WHERE id={id}")
+    conn.commit()
+    
+    
+def update_task_name_local(conn: sqlite3.Connection, id:int, new_name: str):
+    cursor = conn.cursor()
+    cursor.execute(f"UPDATE tasks SET name = ('{new_name}') WHERE id = {id}")
+    conn.commit()
+
+
+def update_task_desc_local(conn: sqlite3.Connection, id:int, new_desc: str):
+    cursor = conn.cursor()
+    cursor.execute(f"UPDATE tasks SET description = ('{new_desc}') WHERE id = {id}")
+    conn.commit()
+    
+    
+def update_task_deadline_local(conn: sqlite3.Connection, id:int, new_deadline: str):
+    cursor = conn.cursor()
+    cursor.execute(f"UPDATE tasks SET endDate = ('{new_deadline}') WHERE id = {id}")
     conn.commit()
 
 if __name__ == "__main__":
