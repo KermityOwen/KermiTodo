@@ -9,6 +9,7 @@ from datetime import datetime
 
 from task_handler import Task, Tasks_handler
 
+START_RESPONSE = "Hello, Kermit. Enter Commands Below :)"
 # TODO color config
 
 def generate_header() -> Panel:
@@ -21,12 +22,12 @@ def generate_header() -> Panel:
     )
     return Panel(grid, border_style="rgb(230,255,250)", style="white on rgb(80,200,70)")
 
-def generate_prompt() -> Panel:
+def generate_prompt(cmd_output: str) -> Panel:
     grid = Table.grid(expand=True)
     grid.add_column(justify="center", ratio=1)
     grid.add_column(justify="right")
     grid.add_row(
-        "[green]Commands: Add, Remove, Update, Sync, Help[/green]"
+        f"[green]{cmd_output}[/green]"
     )
     return Panel(grid, border_style="rgb(50,125,100)", style="default")
 
@@ -70,12 +71,13 @@ def generate_table(tasks: Dict[int, Task]):
     return table
 
 
-def render_UI(tasks: dict, console: Console, debug=False):
+def render_UI(tasks: dict, console: Console, cmd_output=START_RESPONSE, debug=False):
     if (debug):    
         os.system('cls||clear')
     table_panel = Panel.fit(generate_table(tasks), border_style="green", title="[rgb(80,200,70)]Tasks")
     table_panel.expand = True
     
+    # TODO Fix vertical layout scaling
     layout = Layout()
     layout.split_column(
         Layout(name="header", minimum_size=3),
@@ -95,7 +97,7 @@ def render_UI(tasks: dict, console: Console, debug=False):
     
     layout["prompt"].ratio = 1
     layout["prompt"].update(
-        generate_prompt()
+        generate_prompt(cmd_output=cmd_output)
     )
 
     console.print(layout)

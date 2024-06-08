@@ -19,7 +19,9 @@ if __name__ == "__main__":
     
     render_UI(task_handler.tasks, console)
     
-    while True:
+    # This is a BLOCKING loop
+    # Exit conditions are handled internally within Command_handler
+    while True: 
         input = console_prompt.input("[green] >: ")
-        cmd_handler.read_command(input)
-        render_UI(task_handler.tasks, console)
+        cmd_output = cmd_handler.read_commands(input)
+        render_UI(task_handler.tasks, console, cmd_output=cmd_output)
