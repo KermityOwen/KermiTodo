@@ -2,31 +2,31 @@ import sqlite3
 from datetime import datetime
 from db_handler import *
 
+
+def validate_task_args(name: str, description: str):
+    if (len(name) > 32):
+        raise Exception("Invalid Name. Name Too Long")
+    if (len(name) == 0):
+        raise Exception("Invalid Name. Name Empty")
+    if (len(description) > 512):
+        raise Exception("Invalid Description. Description Too Long")
+    if (len(description) == 0):
+        raise Exception("Invalid Description. Description Empty")
+
+
 class Task:
     def __init__(self, name: str, description: str, date_created: datetime, date_deadline= datetime.now(), complete=False):
-        if(self.validate(name, description)):
-            pass 
-        else:
-            raise Exception("Invalid Task")
-        
+        validate_task_args(name, description)
         self.name = name
         self.description = description
         self.date_created = date_created
         self.date_deadline = date_deadline
-        self.complete = complete
-        
-        print("Task Created")
-        
-        
-    def validate(self, name: str, description: str):
-        validity = True
-        validity = (len(name) <= 32) and (len(name) > 0) and validity 
-        validity = (len(description) <= 512) and validity
-        return validity
+        self.complete = complete  
     
     
     def toggle_complete(self):
         self.complete = not self.complete
+        
         
     def __str__(self):
         return (f"Name: {self.name}\n"
@@ -40,7 +40,6 @@ class Tasks_handler:
     def __init__(self, db_path: str):
         self.id_counter = 0
         self.tasks: dict[int, Task] = {} # Index : Task Object
-
         self.conn = sqlite3.connect(db_path)
     
     
@@ -59,7 +58,6 @@ class Tasks_handler:
         self.id_counter = highest_id+1
         
             
-    
     def add_task(self, task: Task):
         self.tasks[self.id_counter] = task
         add_task_local(self.conn, self.id_counter, task.name, task.description, task.date_created, task.date_deadline)
@@ -67,16 +65,23 @@ class Tasks_handler:
         
         
     def complete_task(self, task_id: int):
+        if task_id not in self.tasks:
+            raise Exception("Task not found")
         self.tasks[task_id].toggle_complete()
         toggle_complete_local(self.conn, task_id)
 
 
     def remove_task(self, task_id: int):
+        if task_id not in self.tasks:
+            raise Exception("Task not found")
         self.tasks.pop(task_id)
         remove_task_local(self.conn, task_id)
         
         
     def update_task(self, task_id: int, new_name: str, new_desc: str, new_deadline_str: str):
+        if task_id not in self.tasks:
+            raise Exception("Task not found")
+        validate_task_args(new_name, new_desc)
         # NOT THE BEST (or even a good) WAY TO DO IT BUT IT WORKS FOR NOW
         # Easiest way to handle skip cases
         if new_name != "-":  

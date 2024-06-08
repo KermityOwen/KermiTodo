@@ -7,7 +7,7 @@ import os
 from typing import Dict
 from datetime import datetime
 
-from task_handler import Task, Tasks_handler
+from task_handler import Task
 
 START_RESPONSE = "Hello, Kermit. Enter Commands Below :)"
 # TODO color config

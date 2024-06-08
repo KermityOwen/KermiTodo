@@ -2,7 +2,7 @@ from task_handler import Task, Tasks_handler
 from datetime import datetime
 import os
 
-HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>"""
+HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>."""
 HELP_ADD = """Syntax: add <task_name> <task_description> <task_deadline>. To add a task to the to-do list, date is in the format of dd/mm/YYYY"""
 HELP_REMOVE = """Syntax: remove <task_id>. Removes task from to-do list."""
 HELP_EXIT = """Syntax: exit. Exits the program"""
@@ -20,45 +20,71 @@ class Command_handler:
         
         self.task_handler = task_handler
     
-    # TODO handle argument validations
     
     def help_command(self, args_arr: list, help=False):
         if help:
             return HELP_HELP
+        
         if len(args_arr) == 0:
             # Dynamically updates along with dictionary
             return f"Command List: {HELP_HELP}. {str(list(self.COMMANDS_MAP.keys()))}."
         else:
-            return self.COMMANDS_MAP.get(args_arr[0])([], help=True) # Kinda shitty code but its compact and efficient
+            try:
+                return self.COMMANDS_MAP.get(args_arr[0])([], help=True) # Kinda shitty code but its compact and efficient
+            except: 
+                return f"Help: '{args_arr[0]}', Command Not Found"
     
     
     def add_task_command(self, args_arr, help=False):
         if help:
             return HELP_ADD
-        task = Task(args_arr[0], args_arr[1], datetime.now(), datetime.strptime(args_arr[2],"%d/%m/%Y"))
-        self.task_handler.add_task(task)
-        return "Task added successfully"
         
+        try:
+            task = Task(args_arr[0], args_arr[1], datetime.now(), datetime.strptime(args_arr[2],"%d/%m/%Y")) # Exception checking here
+            self.task_handler.add_task(task)
+            return "Task added successfully"
+        except IndexError:
+            return "Add: Arguments Missing. Use 'help add' for more details."
+        except Exception as e: # Custom Exceptions raised and handled in task_handler.py
+            return e
+            
         
     def remove_task_command(self, args_arr, help=False):
         if help:
             return HELP_REMOVE
-        self.task_handler.remove_task(int(args_arr[0]))
-        return "Task removed successfully"
+        
+        try:
+            self.task_handler.remove_task(int(args_arr[0])) # Exception checking here
+            return "Task removed successfully"
+        except IndexError:
+            return "Remove: Arguments Missing. Use 'help remove' for more details."
+        except Exception as e: # Custom Exceptions raised and handled in task_handler.py
+            return e
         
         
     def complete_task_command(self, args_arr, help=False):
         if help:
             return HELP_COMPLETE
-        self.task_handler.complete_task(int(args_arr[0]))
-        return "Task completed successfully"
+        
+        try:
+            self.task_handler.complete_task(int(args_arr[0])) # Exception checking here
+            return "Task completed successfully."
+        except IndexError:
+            return "Complete: Arguments Missing. Use 'help complete' for more details."
+        except Exception as e:
+            return e
     
     
     def update_task_command(self, args_arr, help=False):
         if help:
             return HELP_UPDATE
-        self.task_handler.update_task(int(args_arr[0]), args_arr[1], args_arr[2], args_arr[3])
-        return "Task updated successfully"
+        try:
+            self.task_handler.update_task(int(args_arr[0]), args_arr[1], args_arr[2], args_arr[3])
+            return "Task updated successfully"
+        except IndexError:
+            return "Update: Arguments Missing. Use 'help update' for more details."
+        except Exception as e:
+            return e
     
 
     def exit_command(self, args_arr, help=False): # Need to pass in args but doesn't need to use them
