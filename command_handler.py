@@ -3,12 +3,13 @@ from datetime import datetime
 import os
 
 
-HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>. Default seperator is ' '"""
+HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>."""
 HELP_ADD = """Syntax: add <task_name> <task_description> <task_deadline>. To add a task to the to-do list, date is in the format of dd/mm/YYYY"""
 HELP_REMOVE = """Syntax: remove <task_id>. Removes task from to-do list."""
 HELP_EXIT = """Syntax: exit. Exits the program"""
 HELP_COMPLETE = """Syntax: complete <task_id>. Toggles task's completeness"""
 HELP_UPDATE = """Syntax: update <task_id> <task_name> <task_description> <task_deadline>. Updates task's details. Enter '-' to skip updating that element."""
+
 
 ADD_ARGS_TIPS = ["> Enter Task's Name <",
                  "> Enter Task's Description <",
@@ -19,6 +20,7 @@ UPDATE_ARGS_TIPS = ["> Enter Task's Id <",
                     "> Enter Task's Name <",
                     "> Enter Task's Description <",
                     "> Enter Task's Deadline (in format of dd/mm/YYYY)"]
+
 
 class Command_handler:
     def __init__(self, task_handler: Tasks_handler):
@@ -42,7 +44,7 @@ class Command_handler:
         
         if len(args_arr) == 0:
             # Dynamically updates along with dictionary
-            return f"Command List: {HELP_HELP}. {str(list(self.COMMANDS_MAP.keys()))}."
+            return f"{HELP_HELP} Command List: {str(list(self.COMMANDS_MAP.keys()))}."
         else:
             try:
                 return self.COMMANDS_MAP.get(args_arr[0])([], help=True) # Kinda shitty code but its compact and efficient
@@ -155,5 +157,5 @@ class Command_handler:
                 cmd_out = self.COMMANDS_MAP.get(func)(parsed_args)
             return cmd_out
         except Exception as e:
-            # return f"Invalid Command: {func}. Use 'help' to get a full list of commands."
-            return e
+            return f"Invalid Command: {func}. Use 'help' to get a full list of commands."
+            # return e

@@ -4,8 +4,9 @@ from ui import render_UI
 from rich.console import Console
 
 SQLITE_PATH = "./tasks_db.sqlite"
+DEBUG = False
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     console = Console()
     console.height = console.height - 1
     
@@ -17,11 +18,12 @@ if __name__ == "__main__":
     
     task_handler.load_local_db()
     
-    render_UI(task_handler.tasks, console)
+    render_UI(task_handler.tasks, console, debug=DEBUG)
     
     # This is a BLOCKING loop
     # Exit conditions are handled internally within Command_handler
     while True: 
         input = console_prompt.input("[green] >: ")
         cmd_output = cmd_handler.read_commands(input)
-        render_UI(task_handler.tasks, console, cmd_output=cmd_output)
+        render_UI(task_handler.tasks, console, cmd_output=cmd_output, debug=DEBUG)
+        
