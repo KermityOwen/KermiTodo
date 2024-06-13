@@ -1,3 +1,0 @@
-Ensure Debug mode is off
-Fix scaling so command output doesn't run off screen
-If branched argument is invalid then ask user to reenter instead of restart

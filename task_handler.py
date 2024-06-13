@@ -41,6 +41,8 @@ class Tasks_handler:
         self.id_counter = 0
         self.tasks: dict[int, Task] = {} # Index : Task Object
         self.conn = sqlite3.connect(db_path)
+        cursor = self.conn.cursor()
+        cursor.execute(SQL_CREATE_TABLE)
     
     
     def load_local_db(self):

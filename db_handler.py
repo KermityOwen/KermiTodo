@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-SQL_CREATE_TABLE = f"CREATE TABLE tasks (id INTERGER NOT NULL PRIMARY KEY, name TEXT, description TEXT, startDate TEXT, endDate TEXT, complete INTEGER NOT NULL)"
+SQL_CREATE_TABLE = f"CREATE TABLE IF NOT EXISTS tasks (id INTERGER NOT NULL PRIMARY KEY, name TEXT, description TEXT, startDate TEXT, endDate TEXT, complete INTEGER NOT NULL)"
 
 SQL_DELETE_TABLE = f"DROP TABLE tasks"
 
@@ -18,6 +18,7 @@ def reset_local_db(conn: sqlite3.Connection):
     except:
         pass
     cursor.execute(SQL_CREATE_TABLE)
+
 
 def toggle_complete_local(conn: sqlite3.Connection, id: int):
     cursor = conn.cursor()
@@ -60,5 +61,4 @@ def update_task_deadline_local(conn: sqlite3.Connection, id:int, new_deadline: s
 if __name__ == "__main__":
     conn = sqlite3.connect("tasks_db.sqlite")
     reset_local_db(conn)
-    # add_task_local(conn, 1, "test", "desc", datetime.now(), datetime(2024,6,5))
     
