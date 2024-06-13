@@ -1,0 +1,17 @@
+{
+    "title":"rgb(230,255,250)",
+    "title_time":"rgb(230,255,250)",
+    "title_bg":"rgb(200,80,70)",
+    "title_layout_border":"rgb(230,255,250)",
+
+    "prompt_layout_border":"rgb(125,50,100)",
+    "prompt_text":"red",
+
+    "table_layout_border":"red",
+    "table_border":"rgb(125,50,100)",
+    "table_column_text":"rgb(255,120,235)",
+    
+    "complete":"rgb(0,255,255)",
+    "overdue":"red",
+    "normal":"white"
+}

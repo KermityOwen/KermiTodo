@@ -2,11 +2,20 @@
 
 **A customisable lightweight CLI to-do application powered only with Python and Rich.**
 
-\*Insert Image Here*
+![Showcase](./readme_images/showcase.png)
 
 ---
 ## Features
-\*Insert Features Here*
+***Completely Scalable TUI***
+![Scalable](./readme_images/scalable.png)
+
+***Customisable Color Schemes***
+![Color](./readme_images/alt_color.png)
+
+***UPCOMING FEATURES***
+- Cloud storage and syncing.
+- Allow multiple pages / category of tasks.
+- *ANYTHING* else you can suggest.
 
 ---
 ## Run-From-Source Manual:
@@ -19,4 +28,11 @@ This section will explain how to run the application directly from the source co
 - Run ```python main.py``` and enjoy :)
 
 ---
-## Run-From-Executable Manual:
+## Executable Manual:
+This section will explain how to run the application directly from a binary executable without a local installation of python and its dependencies. (If you don't trust binaries, which is very understandable, and want to run from source, look at the Run-From-Source section above)
+
+#### Step-by-step Setup:
+- Download the zipped file from releases
+- Unzip the directory
+- Run the executable and enjoy :)
+
