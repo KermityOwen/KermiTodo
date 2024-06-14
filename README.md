@@ -35,4 +35,3 @@ This section will explain how to run the application directly from a binary exec
 - Download the zipped file from releases
 - Unzip the directory
 - Run the executable and enjoy :)
-

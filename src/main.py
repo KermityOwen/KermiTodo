@@ -2,11 +2,17 @@ from task_handler import Tasks_handler
 from command_handler import Command_handler
 from ui import render_UI
 from rich.console import Console
+import pathlib
+import os, sys
 
-SQLITE_PATH = "./tasks_db.sqlite"
+if getattr(sys, 'frozen', False):
+    ABS_PATH = os.path.dirname(sys.executable)
+else:
+    ABS_PATH = pathlib.Path(__file__).parent.resolve()
+SQLITE_PATH = os.path.join(ABS_PATH, "tasks_db.sqlite")
 DEBUG = False
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     console = Console()
     console.height = console.height - 1
     

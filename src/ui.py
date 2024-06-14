@@ -2,20 +2,22 @@ from rich.console import Console
 from rich.table import Table
 from rich.layout import Layout
 from rich.panel import Panel
-import os
-import json
+
+import os, sys, pathlib, json
 from typing import Dict
 from datetime import datetime
 
 from task_handler import Task
 
 
-COLOR_CONFIG = None
-COLOR_CONFIG_PATH = "./color_config.json"
+START_RESPONSE = "Hello, Kermit. Use 'help' to get started ;)"
+if getattr(sys, 'frozen', False):
+    ABS_PATH = os.path.dirname(sys.executable)
+else:
+    ABS_PATH = pathlib.Path(__file__).parent.resolve()
+COLOR_CONFIG_PATH = os.path.join(ABS_PATH, "color_config.json")
 with open(COLOR_CONFIG_PATH) as json_file:
     COLOR_CONFIG = json.load(json_file)
-
-START_RESPONSE = "Hello, Kermit. Use 'help' to get started ;)"
 
 
 def generate_header() -> Panel:

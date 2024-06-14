@@ -1,6 +1,7 @@
 from task_handler import Task, Tasks_handler
 from datetime import datetime
 import os
+from sys import exit
 
 
 HELP_HELP = """Syntax: help <command>. To get instructions on how to use <command>."""
@@ -157,5 +158,5 @@ class Command_handler:
                 cmd_out = self.COMMANDS_MAP.get(func)(parsed_args)
             return cmd_out
         except Exception as e:
-            return f"Invalid Command: {func}. Use 'help' to get a full list of commands."
-            # return e
+            # return f"Invalid Command: {func}. Use 'help' to get a full list of commands."
+            return e
